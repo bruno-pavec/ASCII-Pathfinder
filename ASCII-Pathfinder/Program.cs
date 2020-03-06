@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ASCII_Pathfinder
 {
@@ -6,7 +7,15 @@ namespace ASCII_Pathfinder
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var ASCIIMap = @"
+@---A---+
+        |
+x-B-+   C
+    |   |
+    +---+";
+
+            var asciiPathFinder = new ASCIIPathFinder();
+            asciiPathFinder.LoadASCIIMap(ASCIIMap);
         }
     }
 }

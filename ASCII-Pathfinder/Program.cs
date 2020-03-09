@@ -8,32 +8,32 @@ namespace ASCII_Pathfinder
         static void Main(string[] args)
         {
             var ASCIIMap1 = @"
-  @---A---+
-          |
-  x-B-+   C
-      |   |
-      +---+";
+                              @---A---+
+                                      |
+                              x-B-+   C
+                                  |   |
+                                  +---+";
 
             var ASCIIMap2 = @"  
-  @
-  | C----+
-  A |    |
-  +---B--+
-    |      x
-    |      |
-    +---D--+";
+                              @
+                              | C----+
+                              A |    |
+                              +---B--+
+                                |      x
+                                |      |
+                                +---D--+";
 
 
             var ASCIIMap3 = @"  
-  @---+
-      B
-K-----|--A
-|     |  |
-|  +--E  |
-|  |     |
-+--E--Ex C
-   |     |
-   +--F--+";
+                              @---+
+                                  B
+                            K-----|--A
+                            |     |  |
+                            |  +--E  |
+                            |  |     |
+                            +--E--Ex C
+                               |     |
+                               +--F--+";
 
 
             var asciiPathFinder = new ASCIIPathFinder();

@@ -4,24 +4,49 @@ using System.Linq;
 
 namespace ASCII_Pathfinder
 {
+    /// <summary>
+    /// A class for navigating an ASCII Map.
+    /// </summary>
     public class ASCIIPathFinder
     {
         private static readonly Direction[] AllDirections = (Enum.GetValues(typeof(Direction)) as Direction[]);
 
+        /// <summary>
+        /// The two-dimensional array of <see cref="char"/> representing the loaded ASCIIMap.
+        /// </summary>
         public char[,] ASCIIMapArray { get; private set; }
 
+        /// <summary>
+        /// Specifies the current y,x position.
+        /// </summary>
         public Tuple<int, int> CurrentPosition { get; private set; } = new Tuple<int, int>(0, 0);
 
+        /// <summary>
+        /// Specifies the <see cref="Direction"/> in which the last move was done.
+        /// </summary>
         public Direction? LastMovedInDirection { get; private set; }
 
+        /// <summary>
+        /// All characters passed on the map so far.
+        /// </summary>
         public string PassedPath { get; private set; }
 
+        /// <summary>
+        /// Char in the current position.
+        /// </summary>
         public char CurrentChar => PassedPath.LastOrDefault();
 
+        /// <summary>
+        /// All characters found along the passed path that are not Start, Left or Right, Up or Down, Turning Point or End characters.
+        /// </summary>
         public string FoundChars => new string(PassedPath.Where(c => c != ConstantChars.START
         && c != ConstantChars.LEFT_OR_RIGHT && c != ConstantChars.UP_OR_DOWN && c != ConstantChars.TURNING_POINT
         && c != ConstantChars.END).ToArray());
 
+        /// <summary>
+        /// Loads the string with ASCIIMap.
+        /// </summary>
+        /// <param name="ASCIIMap">The map.</param>
         public void LoadASCIIMap(string ASCIIMap)
         {
             if (string.IsNullOrWhiteSpace(ASCIIMap)) throw new ArgumentException("The provided ASCIIMap is empty!");
@@ -88,18 +113,35 @@ namespace ASCII_Pathfinder
             return c.HasValue && !char.IsWhiteSpace(c.Value);
         }
 
+        /// <summary>
+        /// Chooses the next direction to go in to follow the path.
+        /// </summary>
+        /// <returns>The <see cref="Direction"/> to go in or null if no possible direction is found.</returns>
         public Direction? WhereToNext()
         {
-            return this.CurrentChar switch
+            switch (this.CurrentChar)
             {
-                ConstantChars.START => AllDirections.FirstOrDefault(d => this.IsValidPathChar(this.Look(d))),
-                ConstantChars.END => null,
-                //The below .OrderBy orders false first, and we want the last direction we moved in to take precedence over others 
-                _ => AllDirections.OrderBy(d => d != this.LastMovedInDirection).FirstOrDefault(d => d != OppositeOf(this.LastMovedInDirection) &&
-             this.IsValidPathChar(this.Look(d)))
-            };
+                case ConstantChars.START:
+                    {
+                        var allPossibleDirections = AllDirections.Where(d => this.IsValidPathChar(this.Look(d)));
+                        return allPossibleDirections.Any() ? allPossibleDirections.First() : (Direction?)null;
+                    }
+                case ConstantChars.END:
+                    return null;
+                default:
+                    {
+                        //The below .OrderBy orders false first, and we want the last direction we moved in to take precedence over others 
+                        var allPossibleDirections = AllDirections.OrderBy(d => d != this.LastMovedInDirection).Where(d => d != OppositeOf(this.LastMovedInDirection) &&
+                                     this.IsValidPathChar(this.Look(d)));
+                        return allPossibleDirections.Any() ? allPossibleDirections.First() : (Direction?)null;
+                    }
+            }
         }
 
+        /// <summary>
+        /// Moves in the specified direction, collecting the character found.
+        /// </summary>
+        /// <param name="direction">The <see cref="Direction"/> to move to.</param>
         public void Go(Direction direction)
         {
             var characterInDirection = this.Look(direction);
@@ -136,7 +178,9 @@ namespace ASCII_Pathfinder
             return false;
         }
 
-
+        /// <summary>
+        /// Finds the start position and follows the path to the end.
+        /// </summary>
         public void WalkThePath()
         {
             if (!this.GoToStart())
@@ -154,7 +198,12 @@ namespace ASCII_Pathfinder
 
 
 
-
+        /// <summary>
+        /// Creates a two-dimensional array from a list of arrays of <typeparam name="T">.
+        /// </summary>
+        /// <typeparam name="T">The underlying type.</typeparam>
+        /// <param name="arrays">List of arrays.</param>
+        /// <returns>Two-dimensional array of <typeparam name="T".></returns>
         public static T[,] CreateRectangularArray<T>(IList<T[]> arrays)
         {
             if (!arrays.Any())
@@ -179,6 +228,12 @@ namespace ASCII_Pathfinder
             return ret;
         }
 
+
+        /// <summary>
+        /// Finds the oppostite <see cref="Direction"/>.
+        /// </summary>
+        /// <param name="direction">The <see cref="Direction"/> to find the opposite of.</param>
+        /// <returns>The opposite <see cref="Direction"/></returns>
         public static Direction OppositeOf(Direction? direction)
         {
             if (!direction.HasValue) throw new ArgumentNullException(nameof(direction));
@@ -193,6 +248,9 @@ namespace ASCII_Pathfinder
         }
     }
 
+    /// <summary>
+    /// Utility to avoid magic strings.
+    /// </summary>
     public struct ConstantChars
     {
         public const char START = '@';

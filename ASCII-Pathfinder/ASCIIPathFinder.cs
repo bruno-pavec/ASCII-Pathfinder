@@ -74,33 +74,23 @@ namespace ASCII_Pathfinder
             return this.ASCIIMapArray[coordinatesToLookAt.Item1, coordinatesToLookAt.Item2];
         }
 
-        private bool IsValidCharForDirection(Direction direction, char? charInDirection)
+        private bool IsValidPathChar(char? c)
         {
-            if (!charInDirection.HasValue || char.IsWhiteSpace(charInDirection.Value))
-                return false;
-            if (charInDirection == ConstantChars.UP_OR_DOWN &&
-                               direction != Direction.Up && direction != Direction.Down)
-                return false;
-
-            if (charInDirection == ConstantChars.LEFT_OR_RIGHT &&
-                             direction != Direction.Left && direction != Direction.Right)
-                return false;
-
-            return true;
+            return c.HasValue && !char.IsWhiteSpace(c.Value);
         }
 
         public Direction? WhereToNext()
         {
             return this.CurrentChar switch
             {
-                ConstantChars.START => AllDirections.FirstOrDefault(d => this.IsValidCharForDirection(d, this.Look(d))),
-                ConstantChars.TURNING_POINT => AllDirections.FirstOrDefault(d => d != OppositeOf(this.LastMovedInDirection) &&
-                this.IsValidCharForDirection(d, this.Look(d))),
+                ConstantChars.START => AllDirections.FirstOrDefault(d => this.IsValidPathChar(this.Look(d))),
                 ConstantChars.END => null,
-                _ => this.IsValidCharForDirection(this.LastMovedInDirection.Value, this.Look(this.LastMovedInDirection.Value)) ?
-                this.LastMovedInDirection : null
+                //The below .OrderBy orders false first, and we want the last direction we moved in to take precedence over others 
+                _ => AllDirections.OrderBy(d => d != this.LastMovedInDirection).FirstOrDefault(d => d != OppositeOf(this.LastMovedInDirection) &&
+             this.IsValidPathChar(this.Look(d)))
             };
         }
+
 
 
 
@@ -135,13 +125,15 @@ namespace ASCII_Pathfinder
         }
 
 
-        public void WalkThePath() {
+        public void WalkThePath()
+        {
             if (!this.GoToStart())
                 throw new InvalidOperationException("Can't find the start of path!");
 
-            while (this.CurrentChar != ConstantChars.END) {
+            while (this.CurrentChar != ConstantChars.END)
+            {
                 var nextDirection = this.WhereToNext();
-                if (!nextDirection.HasValue) 
+                if (!nextDirection.HasValue)
                     throw new InvalidOperationException("Couldn't find next direction to go to! Invalid map?");
 
                 this.Go(nextDirection.Value);
@@ -175,7 +167,8 @@ namespace ASCII_Pathfinder
             return ret;
         }
 
-        private static Direction OppositeOf(Direction? direction) {
+        private static Direction OppositeOf(Direction? direction)
+        {
             if (!direction.HasValue) throw new ArgumentNullException(nameof(direction));
             return direction switch
             {
@@ -188,7 +181,8 @@ namespace ASCII_Pathfinder
         }
     }
 
-    public struct ConstantChars {
+    public struct ConstantChars
+    {
         public const char START = '@';
         public const char TURNING_POINT = '+';
         public const char END = 'x';

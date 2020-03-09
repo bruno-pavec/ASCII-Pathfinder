@@ -7,20 +7,58 @@ namespace ASCII_Pathfinder
     {
         static void Main(string[] args)
         {
-            var ASCIIMap = @"
+            var ASCIIMap1 = @"
 @---A---+
         |
 x-B-+   C
     |   |
     +---+";
 
-            var asciiPathFinder = new ASCIIPathFinder();
-            asciiPathFinder.LoadASCIIMap(ASCIIMap);
+            var ASCIIMap2 = @"
+  @         
+  | C----+  
+  A |    |  
+  +---B--+  
+    |      x
+    |      |
+    +---D--+";
 
+
+            var ASCIIMap3 = @"
+  @---+   
+      B   
+K-----|--A
+|     |  |
+|  +--E  |
+|  |     |
++--E--Ex C
+   |     |
+   +--F--+";
+
+
+            var asciiPathFinder = new ASCIIPathFinder();
+
+            //Map 1
+            WalkTheMap(asciiPathFinder, ASCIIMap1, "Map 1");
+
+            //Map 2
+            WalkTheMap(asciiPathFinder, ASCIIMap2, "Map 2");
+
+            //Map 3
+            WalkTheMap(asciiPathFinder, ASCIIMap3, "Map 3");
+        }
+
+        private static void WalkTheMap(ASCIIPathFinder asciiPathFinder, string map, string mapName)
+        {
+            asciiPathFinder.LoadASCIIMap(map);
             asciiPathFinder.WalkThePath();
 
+            Console.WriteLine(mapName);
+            Console.WriteLine(map);
+            Console.WriteLine();
             Console.WriteLine($"Letters {asciiPathFinder.PassedPath}");
-            Console.WriteLine($"Path as characters {asciiPathFinder.FoundChars}" );
+            Console.WriteLine($"Path as characters {asciiPathFinder.FoundChars}");
+            Console.WriteLine("=========================================================================");
         }
     }
 }

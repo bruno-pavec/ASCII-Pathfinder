@@ -16,6 +16,11 @@ x-B-+   C
 
             var asciiPathFinder = new ASCIIPathFinder();
             asciiPathFinder.LoadASCIIMap(ASCIIMap);
+
+            asciiPathFinder.WalkThePath();
+
+            Console.WriteLine($"Letters {asciiPathFinder.PassedPath}");
+            Console.WriteLine($"Path as characters {asciiPathFinder.FoundChars}" );
         }
     }
 }

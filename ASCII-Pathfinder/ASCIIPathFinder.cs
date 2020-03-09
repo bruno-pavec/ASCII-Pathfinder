@@ -24,11 +24,10 @@ namespace ASCII_Pathfinder
 
         public void LoadASCIIMap(string ASCIIMap)
         {
+            if (string.IsNullOrWhiteSpace(ASCIIMap)) throw new ArgumentException("The provided ASCIIMap is empty!");
+
             var lines = ASCIIMap.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-
-            if (lines.All(ln => string.IsNullOrWhiteSpace(ln)))
-                throw new ArgumentException("The provided ASCIIMap is empty!");
-
+            lines = this.SanitizeLines(lines);
             var rows = lines.ToList()
                 .ConvertAll(s => s.ToCharArray());
 
@@ -37,6 +36,12 @@ namespace ASCII_Pathfinder
             this.PassedPath = string.Empty;
             this.CurrentPosition = new Tuple<int, int>(0, 0);
             this.LastMovedInDirection = null;
+        }
+
+        private string[] SanitizeLines(string[] lines)
+        {
+            var maxLength = lines.Max(l => l.Length);
+            return lines.ToList().ConvertAll(l => l.Length == maxLength ? l : l.PadRight(maxLength, ' ')).ToArray();
         }
 
 
@@ -89,9 +94,6 @@ namespace ASCII_Pathfinder
              this.IsValidPathChar(this.Look(d)))
             };
         }
-
-
-
 
         public void Go(Direction direction)
         {

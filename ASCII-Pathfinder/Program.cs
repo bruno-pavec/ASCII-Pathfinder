@@ -8,25 +8,25 @@ namespace ASCII_Pathfinder
         static void Main(string[] args)
         {
             var ASCIIMap1 = @"
-@---A---+
-        |
-x-B-+   C
-    |   |
-    +---+";
+  @---A---+
+          |
+  x-B-+   C
+      |   |
+      +---+";
 
-            var ASCIIMap2 = @"
-  @         
-  | C----+  
-  A |    |  
-  +---B--+  
+            var ASCIIMap2 = @"  
+  @
+  | C----+
+  A |    |
+  +---B--+
     |      x
     |      |
     +---D--+";
 
 
-            var ASCIIMap3 = @"
-  @---+   
-      B   
+            var ASCIIMap3 = @"  
+  @---+
+      B
 K-----|--A
 |     |  |
 |  +--E  |
@@ -56,8 +56,8 @@ K-----|--A
             Console.WriteLine(mapName);
             Console.WriteLine(map);
             Console.WriteLine();
-            Console.WriteLine($"Letters {asciiPathFinder.PassedPath}");
             Console.WriteLine($"Path as characters {asciiPathFinder.FoundChars}");
+            Console.WriteLine($"Letters {asciiPathFinder.PassedPath}");
             Console.WriteLine("=========================================================================");
         }
     }

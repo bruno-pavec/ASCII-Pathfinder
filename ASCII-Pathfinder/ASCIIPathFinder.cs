@@ -69,6 +69,11 @@ namespace ASCII_Pathfinder
             };
         }
 
+        /// <summary>
+        /// Finds character in the specified direction. Null if the field in that direction is out of bounds of the map array.
+        /// </summary>
+        /// <param name="direction">Direction to look in.</param>
+        /// <returns>Character in the specified direction.</returns>
         public char? Look(Direction direction)
         {
             if (this.IsOutOfBounds(direction))

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ASCII_Pathfinder
 {
@@ -41,18 +40,6 @@ namespace ASCII_Pathfinder
         }
 
 
-        private bool IsOutOfBounds(Direction direction)
-        {
-            return direction switch
-            {
-                Direction.Up => this.CurrentPosition.Item1 <= 0,
-                Direction.Right => this.CurrentPosition.Item2 >= (ASCIIMapArray.GetLength(1) - 1),
-                Direction.Down => this.CurrentPosition.Item1 >= (ASCIIMapArray.GetLength(0) - 1),
-                Direction.Left => this.CurrentPosition.Item2 <= 0,
-                _ => true,
-            };
-        }
-
         private Tuple<int, int> GetCoordinatesFor(Direction direction)
         {
             return direction switch
@@ -62,6 +49,18 @@ namespace ASCII_Pathfinder
                 Direction.Down => new Tuple<int, int>(this.CurrentPosition.Item1 + 1, this.CurrentPosition.Item2),
                 Direction.Left => new Tuple<int, int>(this.CurrentPosition.Item1, this.CurrentPosition.Item2 - 1),
                 _ => throw new ArgumentException($"Impossible to find coordinates for {direction.ToString("g")}!", nameof(direction)),
+            };
+        }
+
+        private bool IsOutOfBounds(Direction direction)
+        {
+            return direction switch
+            {
+                Direction.Up => this.CurrentPosition.Item1 <= 0,
+                Direction.Right => this.CurrentPosition.Item2 >= (ASCIIMapArray.GetLength(1) - 1),
+                Direction.Down => this.CurrentPosition.Item1 >= (ASCIIMapArray.GetLength(0) - 1),
+                Direction.Left => this.CurrentPosition.Item2 <= 0,
+                _ => true,
             };
         }
 
@@ -96,6 +95,10 @@ namespace ASCII_Pathfinder
 
         public void Go(Direction direction)
         {
+            var characterInDirection = this.Look(direction);
+            if (!characterInDirection.HasValue)
+                throw new ArgumentException("Can't go there.", nameof(direction));
+
             this.PassedPath += this.Look(direction);
             this.CurrentPosition = this.GetCoordinatesFor(direction);
             this.LastMovedInDirection = direction;
@@ -119,9 +122,7 @@ namespace ASCII_Pathfinder
 
                 }
             }
-
             return false;
-
         }
 
 
@@ -167,7 +168,7 @@ namespace ASCII_Pathfinder
             return ret;
         }
 
-        private static Direction OppositeOf(Direction? direction)
+        public static Direction OppositeOf(Direction? direction)
         {
             if (!direction.HasValue) throw new ArgumentNullException(nameof(direction));
             return direction switch

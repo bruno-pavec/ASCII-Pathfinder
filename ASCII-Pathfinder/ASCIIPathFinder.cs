@@ -106,6 +106,10 @@ namespace ASCII_Pathfinder
             this.LastMovedInDirection = direction;
         }
 
+        /// <summary>
+        /// Finds the start of path <see cref="ConstantChars.START"/> and goes to that position.
+        /// </summary>
+        /// <returns>True if start is found, else false.</returns>
         public bool GoToStart()
         {
             var height = this.ASCIIMapArray.GetLength(0);

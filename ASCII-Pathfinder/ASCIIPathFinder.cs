@@ -36,12 +36,13 @@ namespace ASCII_Pathfinder
         /// </summary>
         public char CurrentChar => PassedPath.LastOrDefault();
 
+
+        private List<FoundLetter> _foundLetters = new List<FoundLetter>();
+
         /// <summary>
-        /// All characters found along the passed path that are not Start, Left or Right, Up or Down, Turning Point or End characters.
+        /// All letters found along the passed path.
         /// </summary>
-        public string FoundChars => new string(PassedPath.Where(c => c != ConstantChars.START
-        && c != ConstantChars.LEFT_OR_RIGHT && c != ConstantChars.UP_OR_DOWN && c != ConstantChars.TURNING_POINT
-        && c != ConstantChars.END).ToArray());
+        public string FoundLetters => new string(this._foundLetters.Select(fC => fC.Char).ToArray());
 
         /// <summary>
         /// Loads the string with ASCIIMap.
@@ -61,6 +62,7 @@ namespace ASCII_Pathfinder
             this.PassedPath = string.Empty;
             this.CurrentPosition = new Tuple<int, int>(0, 0);
             this.LastMovedInDirection = null;
+            this._foundLetters.Clear();
         }
 
         private string[] SanitizeLines(string[] lines)
@@ -110,7 +112,9 @@ namespace ASCII_Pathfinder
 
         private bool IsValidPathChar(char? c)
         {
-            return c.HasValue && !char.IsWhiteSpace(c.Value);
+            return c.HasValue && !char.IsWhiteSpace(c.Value) &&
+                (c.Value == ConstantChars.START || c.Value == ConstantChars.LEFT_OR_RIGHT || c.Value == ConstantChars.UP_OR_DOWN
+                || c.Value == ConstantChars.TURNING_POINT || c.Value == ConstantChars.END || IsLetter(c));
         }
 
         /// <summary>
@@ -148,9 +152,22 @@ namespace ASCII_Pathfinder
             if (!characterInDirection.HasValue)
                 throw new ArgumentException("Can't go there.", nameof(direction));
 
-            this.PassedPath += this.Look(direction);
+            this.PassedPath += characterInDirection;
             this.CurrentPosition = this.GetCoordinatesFor(direction);
             this.LastMovedInDirection = direction;
+
+
+            if (this.IsNewFoundLetter(characterInDirection, this.CurrentPosition.Item1, this.CurrentPosition.Item2))
+                this._foundLetters.Add(new FoundLetter { Char = characterInDirection.Value, Coordinates = new Tuple<int, int>(this.CurrentPosition.Item1, this.CurrentPosition.Item2) });
+        }
+
+        private static bool IsLetter(char? c) => c.HasValue && char.IsLetter(c.Value) && c.Value != ConstantChars.END;
+
+
+        private bool IsNewFoundLetter(char? c, int y, int x)
+        {
+            return IsLetter(c) && !this._foundLetters.Any(c => c.Coordinates.Item1 == y
+                  && c.Coordinates.Item2 == x);
         }
 
         /// <summary>
@@ -170,6 +187,7 @@ namespace ASCII_Pathfinder
                         this.PassedPath = ConstantChars.START.ToString();
                         this.CurrentPosition = new Tuple<int, int>(i, j);
                         this.LastMovedInDirection = null;
+                        this._foundLetters.Clear();
                         return true;
                     }
 
@@ -246,17 +264,24 @@ namespace ASCII_Pathfinder
                 _ => throw new ArgumentOutOfRangeException(nameof(direction))
             };
         }
-    }
 
-    /// <summary>
-    /// Utility to avoid magic strings.
-    /// </summary>
-    public struct ConstantChars
-    {
-        public const char START = '@';
-        public const char TURNING_POINT = '+';
-        public const char END = 'x';
-        public const char UP_OR_DOWN = '|';
-        public const char LEFT_OR_RIGHT = '-';
+        /// <summary>
+        /// Utility to avoid magic strings.
+        /// </summary>
+        public struct ConstantChars
+        {
+            public const char START = '@';
+            public const char TURNING_POINT = '+';
+            public const char END = 'x';
+            public const char UP_OR_DOWN = '|';
+            public const char LEFT_OR_RIGHT = '-';
+        }
+
+
+        protected struct FoundLetter
+        {
+            public char Char;
+            public Tuple<int, int> Coordinates;
+        }
     }
 }

@@ -56,8 +56,8 @@ namespace ASCII_Pathfinder
             Console.WriteLine(mapName);
             Console.WriteLine(map);
             Console.WriteLine();
-            Console.WriteLine($"Path as characters {asciiPathFinder.FoundChars}");
-            Console.WriteLine($"Letters {asciiPathFinder.PassedPath}");
+            Console.WriteLine($"Letters {asciiPathFinder.FoundLetters}");
+            Console.WriteLine($"Path as characters {asciiPathFinder.PassedPath}");
             Console.WriteLine("=========================================================================");
         }
     }

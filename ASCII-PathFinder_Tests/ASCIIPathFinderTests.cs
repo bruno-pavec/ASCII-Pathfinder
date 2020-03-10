@@ -1,6 +1,7 @@
 using ASCII_Pathfinder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using static ASCII_Pathfinder.ASCIIPathFinder;
 
 namespace ASCII_PathFinder_Tests
 {
@@ -14,7 +15,7 @@ namespace ASCII_PathFinder_Tests
             var map = @"
                             | 
                             |  
-                            |
+                       -----|
                             |
                             |
                             |  
@@ -225,7 +226,7 @@ namespace ASCII_PathFinder_Tests
         }
 
         [TestMethod]
-        public void WhereToNext_Null_IF_No_Path()
+        public void WhereToNext_Null_If_No_Path()
         {
             var asciiPathFinder = new ASCIIPathFinder();
 
@@ -243,6 +244,75 @@ namespace ASCII_PathFinder_Tests
 
             Assert.AreEqual(asciiPathFinder.CurrentChar, 'B');
             Assert.AreEqual(asciiPathFinder.WhereToNext(), null);
+        }
+
+        [TestMethod]
+        public void FoundLetters_Contains_Passed_Letters()
+        {
+            var asciiPathFinder = new ASCIIPathFinder();
+
+            var map1 = @"
+                           @
+                           |
+                           A--B
+                              |
+                           x--C
+                        ";
+            asciiPathFinder.LoadASCIIMap(map1);
+            asciiPathFinder.GoToStart();
+
+            asciiPathFinder.Go(Direction.Down);
+            asciiPathFinder.Go(Direction.Down);
+            Assert.AreEqual(asciiPathFinder.FoundLetters, "A");
+
+            asciiPathFinder.Go(Direction.Right);
+            asciiPathFinder.Go(Direction.Right);
+            asciiPathFinder.Go(Direction.Right);
+            Assert.AreEqual(asciiPathFinder.FoundLetters, "AB");
+
+            asciiPathFinder.Go(Direction.Down);
+            asciiPathFinder.Go(Direction.Down);
+            asciiPathFinder.Go(Direction.Left);
+            Assert.AreEqual(asciiPathFinder.FoundLetters, "ABC");
+        }
+
+
+        [TestMethod]
+        public void FoundLetters_Ignores_Previously_Found_Letters()
+        {
+            var asciiPathFinder = new ASCIIPathFinder();
+
+            var map1 = @"
+                           x 
+                        @--A--+
+                           |  |
+                           +--+
+                        ";
+            asciiPathFinder.LoadASCIIMap(map1);
+            asciiPathFinder.GoToStart();
+
+
+            asciiPathFinder.Go(Direction.Right);
+            asciiPathFinder.Go(Direction.Right);
+            asciiPathFinder.Go(Direction.Right);
+            Assert.AreEqual(asciiPathFinder.FoundLetters, "A");
+
+            asciiPathFinder.Go(Direction.Right);
+            asciiPathFinder.Go(Direction.Right);
+            asciiPathFinder.Go(Direction.Right);
+
+            asciiPathFinder.Go(Direction.Down);
+            asciiPathFinder.Go(Direction.Down);
+
+            asciiPathFinder.Go(Direction.Left);
+            asciiPathFinder.Go(Direction.Left);
+            asciiPathFinder.Go(Direction.Left);
+
+            asciiPathFinder.Go(Direction.Up);
+            asciiPathFinder.Go(Direction.Up);
+            asciiPathFinder.Go(Direction.Up);
+            Assert.AreEqual(asciiPathFinder.FoundLetters, "A");
+
         }
     }
 }
